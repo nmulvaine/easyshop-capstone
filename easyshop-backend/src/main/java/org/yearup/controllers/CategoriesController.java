@@ -12,7 +12,7 @@ import java.util.List;
 
 // add the annotations to make this a REST controller
 // add the annotation to make this controller the endpoint for the following url
-    // http://localhost:8080/categories
+// http://localhost:8080/categories
 // add annotation to allow cross site origin requests
 public class CategoriesController
 {
@@ -23,26 +23,29 @@ public class CategoriesController
     // create an Autowired controller to inject the categoryDao and ProductDao
 
     // add the appropriate annotation for a get action
+    @GetMapping
+    // add annotation to ensure that only an ADMIN can call this function
     public List<Category> getAll()
     {
         // find and return all categories
-        return null;
+        return categoryDao.getAllCategories();
     }
 
-    // add the appropriate annotation for a get action
+    @GetMapping("/{id}")
+    // TODO: add annotation to ensure that only an ADMIN can call this function
     public Category getById(@PathVariable int id)
     {
-        // get the category by id
-        return null;
+        return categoryDao.getById(id);
     }
 
     // the url to return all products in category 1 would look like this
     // https://localhost:8080/categories/1/products
     @GetMapping("{categoryId}/products")
-    public List<Product> getProductsById(@PathVariable int categoryId)
+    public List<Product> getProductsById(@PathVariable int id)
     {
         // get a list of product by categoryId
-        return null;
+        return productDao.listByCategoryId(id);
+
     }
 
     // add annotation to call this method for a POST action
@@ -50,6 +53,7 @@ public class CategoriesController
     public Category addCategory(@RequestBody Category category)
     {
         // insert the category
+
         return null;
     }
 
