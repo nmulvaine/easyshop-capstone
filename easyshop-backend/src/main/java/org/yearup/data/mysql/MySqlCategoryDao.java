@@ -27,16 +27,12 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         List<Category> categories = new ArrayList<>();
         String query = "SELECT * FROM categories";
 
-        try (Connection conn = MySqlCategoryDao.getConnection()) {
+        try (Connection conn = getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                int categoryId = resultSet.getInt(0);
-                String categoryName = resultSet.getString("name");
-                String description = resultSet.getString("description");
-
-                Category category = new Category(categoryId, categoryName, description);
+                Category category = mapRow(resultSet);
                 categories.add(category);
             }
             return categories;
@@ -52,6 +48,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     public Category getById(int categoryId)
     {
         String query = "SELECT * FROM Category WHERE category_id =?";
+        Category category = null;
 
         try (Connection conn = getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(query);
