@@ -28,8 +28,8 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         String query = "SELECT * FROM categories";
 
         try (Connection conn = getConnection()) {
-            PreparedStatement preparedStatement = conn.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet resultSet = stmt.executeQuery();
 
             while (resultSet.next()) {
                 Category category = mapRow(resultSet);
@@ -48,13 +48,12 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     public Category getById(int categoryId)
     {
         String query = "SELECT * FROM Category WHERE category_id =?";
-        Category category = null;
 
         try (Connection conn = getConnection()) {
-            PreparedStatement preparedStatement = conn.prepareStatement(query);
-            preparedStatement.setInt(1, categoryId);
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, categoryId);
 
-            ResultSet row = preparedStatement.executeQuery();
+            ResultSet row = stmt.executeQuery();
 
             if (row.next()) {
                 return mapRow(row);
@@ -70,28 +69,31 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     @Override
     public Category create(Category category)
     {
-        String query = "SELECT * FROM Category WHERE category_id =?";
+        String query = """
+        INSERT INTO categories (name, description)
+        VALUES (?,?)
+        """;
 
+        int generatedId = -1;
         try (Connection conn = getConnection()) {
-            PreparedStatement preparedStatement = conn.prepareStatement(query);
-            preparedStatement.setInt(1, category.getCategoryId());
-            ResultSet resultSet = preparedStatement.executeQuery();
+            PreparedStatement stmt = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, category.getName());
+            stmt.setString(2, category.getDescription());
 
-            if (resultSet.next()) {
-                System.out.println("Category already exists with id: " + category.getCategoryId());
-            } else {
-                String insertQuery = "INSERT INTO Category (category_id, name, description) VALUES (?,?,?)";
-                preparedStatement = conn.prepareStatement(insertQuery);
-                preparedStatement.setInt(1, category.getCategoryId());
-                preparedStatement.setString(2, category.getName());
-                preparedStatement.setString(3, category.getDescription());
-                preparedStatement.executeUpdate();
-                System.out.println("New category inserted with id: " + category.getCategoryId());
-            }
-        } catch (SQLException e) {
+            stmt.executeUpdate();
+
+          try (ResultSet rsKey = stmt.getGeneratedKeys())
+          {
+              if (rsKey.next())
+              {
+                  generatedId = rsKey.getInt(1);
+                  category.setCategoryId(generatedId);
+              }
+          } return category;
+    } catch (SQLException e)
+        {
             throw new RuntimeException(e);
         }
-        return new Category(category.getCategoryId(), category.getName(), category.getDescription());
     }
 
     // Update Category //
@@ -99,15 +101,19 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     @Override
     public void update(int categoryId, Category category)
     {
-        String query = "SELECT * FROM category WHERE category_id=?";
+        String query = """
+                UPDATE categories
+                SET name =?, description =?
+                WHERE category_id =?
+                """;
 
         try (Connection conn = getConnection()) {
-            PreparedStatement preparedStatement = conn.prepareStatement(query);
-            preparedStatement.setInt(1, category.getCategoryId());
-            preparedStatement.setString(2, category.getName());
-            preparedStatement.setString(3, category.getDescription());
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, categoryId);
+            stmt.setString(2, category.getName());
+            stmt.setString(3, category.getDescription());
 
-            int rows = preparedStatement.executeUpdate();
+            int rows = stmt.executeUpdate();
             System.out.println("Rows:" + rows + ". Have been updated.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -122,11 +128,12 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 
        try (Connection conn = getConnection())
             {
-               PreparedStatement preparedStatement = conn.prepareStatement(query);
-               preparedStatement.setInt(1, categoryId);
+               PreparedStatement stmt = conn.prepareStatement(query);
+               stmt.setInt(1, categoryId);
 
-               int rows = preparedStatement.executeUpdate();
-               System.out.println("Category with id: " + categoryId + " deleted.");
+               int rows = stmt.executeUpdate();
+               System.out.println("Category: " + categoryId + " deleted.");
+                System.out.println("Rows:" + rows + ". Have been deleted.");
             } catch (SQLException e) {
                throw new RuntimeException(e);
             }
@@ -140,11 +147,11 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         String name = row.getString("name");
         String description = row.getString("description");
 
-        Category category = new Category();
+        Category category = new Category()
         {{
-            category.setCategoryId(categoryId);
-            category.setName(name);
-            category.setDescription(description);
+            setCategoryId(categoryId);
+            setName(name);
+            setDescription(description);
         }};
 
         return category;

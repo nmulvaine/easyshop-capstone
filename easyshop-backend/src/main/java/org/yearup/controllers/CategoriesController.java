@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
@@ -34,7 +35,7 @@ public class CategoriesController
         return categoryDao.getAllCategories();
     }
 
-    @RequestMapping(path = "/{id}")
+    @GetMapping("/{id}")
     @PreAuthorize("permitAll")
     public Category getById(@PathVariable int categoryId)
     {
@@ -63,24 +64,32 @@ public class CategoriesController
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void updateCategory(@PathVariable int id, @RequestBody Category category)
     {
-        categoryDao.update(id, category);
+        try
+        {
+            categoryDao.update(id, category);
+        } catch (Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
     }
 
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable int id)
     {
-        categoryDao.delete(id);
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    class ResourceNotFoundException extends RuntimeException
-    {
-        public ResourceNotFoundException(String message)
+        try
         {
-            super(message);
+            Category category = categoryDao.getById(id);
+            if(category == null)
+            {
+                throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+            } categoryDao.delete(id);
+        } catch (Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
         }
     }
+
 }
