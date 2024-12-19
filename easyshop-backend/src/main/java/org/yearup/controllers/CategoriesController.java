@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
@@ -39,7 +38,7 @@ public class CategoriesController
     @PreAuthorize("permitAll")
     public Category getById(@PathVariable int categoryId)
     {
-    return categoryDao.getById(categoryId);
+        return categoryDao.getById(categoryId);
     }
 
 
@@ -56,7 +55,7 @@ public class CategoriesController
     @ResponseStatus(code = HttpStatus.CREATED)
     public Category addCategory(@RequestBody Category category)
     {
-       return categoryDao.create(category);
+        return categoryDao.create(category);
     }
 
 
@@ -70,8 +69,18 @@ public class CategoriesController
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable int id)
     {
         categoryDao.delete(id);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    class ResourceNotFoundException extends RuntimeException
+    {
+        public ResourceNotFoundException(String message)
+        {
+            super(message);
+        }
     }
 }
