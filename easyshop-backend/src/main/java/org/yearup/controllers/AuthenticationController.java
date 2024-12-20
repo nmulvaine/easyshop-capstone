@@ -65,7 +65,7 @@ public class AuthenticationController
 		}
 		catch (Exception ex)
 		{
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad."  );
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad. AuthController-1"  );
 		}
 	}
 
@@ -94,7 +94,7 @@ public class AuthenticationController
 		}
 		catch (Exception e)
 		{
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad. AuthController-2");
 		}
 	}
 

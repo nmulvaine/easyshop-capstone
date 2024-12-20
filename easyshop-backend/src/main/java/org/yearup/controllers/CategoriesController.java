@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
@@ -42,18 +41,19 @@ public class CategoriesController
 
 	// Get By ID //
 
-	@GetMapping("/{id}")
+	@RequestMapping(path = "/{id}")
+	@PreAuthorize("permitAll()")
 	public ResponseEntity<Category> getById(@PathVariable int id)
 	{
-			Category categoryById = categoryDao.getById(id);
-			if (categoryById == null)
-			{
-				return ResponseEntity.notFound().build();
-			}
-			return ResponseEntity.ok(categoryById);
+		Category category = categoryDao.getById(id);
+		if (category == null)
+		{
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(category);
 	}
 
-    // Get All Products By ID //
+	// Get All Products By ID //
 
 	@GetMapping("{categoryId}/products")
 	public List<Product> getProductsById(@PathVariable int categoryId)

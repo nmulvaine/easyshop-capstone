@@ -52,7 +52,8 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 	@Override
 	public Category getById(int categoryId)
 	{
-		String query = "SELECT * FROM Category WHERE category_id =?";
+		String query = "SELECT * FROM categories WHERE category_id =?";
+		Category category = null;
 
 		try (Connection conn = getConnection())
 		{
@@ -63,14 +64,14 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 
 			if (row.next())
 			{
-				return mapRow(row);
+				category = mapRow(row);
 			}
 		}
 		catch (SQLException e)
 		{
 			throw new RuntimeException(e);
 		}
-		return null;
+		return category;
 	}
 
 	// Create Category //
@@ -137,7 +138,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 	@Override
 	public void delete(int categoryId)
 	{
-		String query = "DELETE FROM category WHERE category_id=?";
+		String query = "DELETE FROM categories WHERE category_id=?";
 
 		try (Connection conn = getConnection())
 		{
@@ -162,7 +163,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 		String name = row.getString("name");
 		String description = row.getString("description");
 
-		Category category = new Category(categoryId, name, description)
+		Category category = new Category()
 		{{
 			setCategoryId(categoryId);
 			setName(name);
