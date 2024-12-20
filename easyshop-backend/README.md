@@ -8,9 +8,13 @@ Nicholas Mulvaine
 
 
 ———————————————————————————
+
 // Overview //
 
 ![easyshop-frontend.png](src/main/resources/images/easyshop-frontend.png)
+![200.png](src/main/resources/images/200.png)
+![201.png](src/main/resources/images/201.png)
+![404.png](src/main/resources/images/404.png)
 
 This project is a Java-based backend for an e-commerce platform, providing functionality to manage users, authentication,
 categories, and products. It utilizes Spring Boot, Spring Security, and a MySQL database.
