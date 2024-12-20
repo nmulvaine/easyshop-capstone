@@ -65,6 +65,7 @@ public class CategoriesController
 
 	@PostMapping()
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@ResponseStatus(HttpStatus.CREATED)
 	public Category addCategory(@RequestBody Category category)
 	{
 		return categoryDao.create(category);

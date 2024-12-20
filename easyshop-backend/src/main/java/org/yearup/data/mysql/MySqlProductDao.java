@@ -1,6 +1,8 @@
 package org.yearup.data.mysql;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.yearup.models.Product;
 import org.yearup.data.ProductDao;
 
@@ -16,6 +18,8 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao {
     public MySqlProductDao(DataSource dataSource) {
         super(dataSource);
     }
+
+    // Search //
 
     @Override
     public List<Product> search(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color) {
@@ -52,11 +56,15 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao {
         return products;
     }
 
+    // LIST BY CATEGORY //
+
     @Override
     public List<Product> listByCategoryId(int categoryId)
     {
         return List.of();
     }
+
+    // GET BY ID //
 
     @Override
     public Product getById(int productId) {
@@ -77,7 +85,10 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao {
         }
     }
 
+    // CREATE PRODUCT //
+
     @Override
+    @ResponseStatus(HttpStatus.CREATED)
     public Product create(Product product) {
         String sql = "INSERT INTO products(name, price, category_id, description, color, image_url, stock, featured) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -108,6 +119,8 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao {
         return null;
     }
 
+    // UPDATE PRODUCT //
+
     @Override
     public void update(int productId, Product product) {
         String sql = "UPDATE products SET name = ?, price = ?, category_id = ?, description = ?, " +
@@ -131,6 +144,8 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao {
         }
     }
 
+    // DELETE PRODUCT //
+
     @Override
     public void delete(int productId) {
         String sql = "DELETE FROM products WHERE product_id = ?";
@@ -143,6 +158,8 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao {
             throw new RuntimeException("Error deleting product", e);
         }
     }
+
+    // MAP ROW //
 
     private static Product mapRow(ResultSet row) throws SQLException {
         return new Product(
