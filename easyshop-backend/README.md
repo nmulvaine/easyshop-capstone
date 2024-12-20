@@ -9,7 +9,8 @@ Nicholas Mulvaine
 
 ———————————————————————————
 // Overview //
-![Screenshot 2024-12-20 at 8.28.28 AM.png](../../../../Desktop/Screenshot%202024-12-20%20at%208.28.28%E2%80%AFAM.png)
+
+![easyshop-frontend.png](src/main/resources/images/easyshop-frontend.png)
 
 This project is a Java-based backend for an e-commerce platform, providing functionality to manage users, authentication,
 categories, and products. It utilizes Spring Boot, Spring Security, and a MySQL database.
@@ -60,7 +61,8 @@ MySQL: Database for persisting data.
 Apache DBCP: For database connection pooling.
 
 // Takeaways //
-![Screenshot 2024-12-20 at 8.24.56 AM.png](../../../../Desktop/Screenshot%202024-12-20%20at%208.24.56%E2%80%AFAM.png)
+
+![row-mapping.png](src/main/resources/images/row-mapping.png)
 
 The project employs a row-mapping mechanism to translate SQL query results into Java objects, ensuring seamless 
 interaction between the database and application logic.
