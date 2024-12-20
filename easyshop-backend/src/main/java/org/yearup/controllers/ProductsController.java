@@ -61,6 +61,8 @@ public class ProductsController
         }
     }
 
+    // Admin Role Required //
+
     @PostMapping()
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Product addProduct(@RequestBody Product product)
